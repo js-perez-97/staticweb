@@ -37,5 +37,8 @@ class ParentNode(HTMLNode):
             raise ValueError("All parent nodes must have a tag")
         if self.children is None:
             raise ValueError("All parent nodes must have children")
+
     def to_html(self):
-        return f"<{self.tag}{self.props_to_html()}>{''.join([child.to_html() for child in self.children])}</{self.tag}>"
+        if self.children is not None:
+            return f"<{self.tag}{self.props_to_html()}>{''.join([child.to_html() for child in self.children])}</{self.tag}>"
+        raise ValueError("All parent nodes must have children")
