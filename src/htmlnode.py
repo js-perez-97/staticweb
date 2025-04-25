@@ -1,3 +1,5 @@
+from textnode import TextType
+
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -42,3 +44,18 @@ class ParentNode(HTMLNode):
         if self.children is not None:
             return f"<{self.tag}{self.props_to_html()}>{''.join([child.to_html() for child in self.children])}</{self.tag}>"
         raise ValueError("All parent nodes must have children")
+
+def text_node_to_html_node(text_node):
+    match text_node.text_type:
+        case TextType.TEXT:
+            return LeafNode(None, text_node.text)
+        case TextType.BOLD:
+            return LeafNode("b", text_node.text)
+        case TextType.ITALIC:
+            return LeafNode("i", text_node.text)
+        case TextType.CODE:
+            return LeafNode("code", text_node.text)
+        case TextType.LINK:
+            return LeafNode("a", text_node.text, props={"href": text_node.link})
+        case TextType.IMAGE:
+            return LeafNode("img", None, props={"src": text_node.url})
