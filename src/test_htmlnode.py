@@ -47,7 +47,15 @@ class TestHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, None)
         self.assertEqual(html_node.value, "This is a text node")
-
+        node = TextNode("THIS IS BOLD", "bold")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "b")
+        self.assertEqual(html_node.value, "THIS IS BOLD")
+        node = TextNode("Click me!", "link", "https://github.com/sebaperz")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "a")
+        self.assertEqual(html_node.value, "Click me!")
+        self.assertEqual(html_node.props, {"href": "https://github.com/sebaperz"})
 
 if __name__ == "__main__":
     unittest.main()
