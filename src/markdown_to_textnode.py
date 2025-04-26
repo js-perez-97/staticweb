@@ -61,7 +61,27 @@ def markdown_list_to_textnode(textlist):
 
     return output
 
-test = "Hellooo worldo and *Hellooo* cosas **World** ... *lol* `banana`"
-test = "Hello world *italics*"
-print(markdown_to_lists(test))
-markdown_list_to_textnode(markdown_to_lists(test))
+#test = "Hellooo worldo and *Hellooo* cosas **World** ... *lol* `banana`"
+#test = "Hello world *italics*"
+#markdown_to_lists(test)
+#print(markdown_list_to_textnode(markdown_to_lists(test)))
+
+
+#ahora vamos a hacerlo bien, que no sirve de nada tener un guia y no usarla kkkk
+
+def split_nodes_delimiter(list_of_old_nodes, delimiter, text_type):
+    output = []
+    for node in list_of_old_nodes:
+        nodeparts = node.text.split(delimiter)
+        if nodeparts[0]!="":
+            output.append(TextNode(nodeparts[0], TextType.TEXT))
+        if nodeparts[1]!="":
+            output.append(TextNode(nodeparts[1], text_type))
+        if nodeparts[2]!="":
+            output.append(TextNode(nodeparts[2], TextType.TEXT))
+    return output
+
+node = TextNode("This is text with a `code block` word", TextType.TEXT)
+node = TextNode("This is text with a `code block`", TextType.TEXT)
+new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+print(new_nodes)
