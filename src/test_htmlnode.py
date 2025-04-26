@@ -1,7 +1,7 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode, ParentNode, text_node_to_html_node
-from textnode import TextNode, TextType
+from htmlnode import HTMLNode, LeafNode, ParentNode
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -23,11 +23,13 @@ class TestHTMLNode(unittest.TestCase):
         leafnode3 = LeafNode("p", "Hello, world!")
         leafnode4 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
         leafnode5 = LeafNode(None, "Normal text")
+        leafnode6 = LeafNode("img", None, {"src": "https://www.google.com/image.jpg", "alt": "Google Image"})
         self.assertEqual(leafnode1, leafnode2)
         self.assertEqual(leafnode3.to_html(), "<p>Hello, world!</p>")
         self.assertEqual(leafnode4.to_html(), '<a href="https://www.google.com">Click me!</a>')
         self.assertRaises(ValueError, LeafNode, tag="p", value=None)
         self.assertEqual(leafnode5.to_html(), "Normal text")
+        self.assertEqual(leafnode6.to_html(), '<img src="https://www.google.com/image.jpg" alt="Google Image">')
 
     def test_to_html_with_children(self):
         child_node = LeafNode("span", "child")
@@ -56,6 +58,13 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(html_node.tag, "a")
         self.assertEqual(html_node.value, "Click me!")
         self.assertEqual(html_node.props, {"href": "https://github.com/sebaperz"})
+
+    def test_image(self):
+        node = TextNode("Google Image", "image", "https://www.google.com/image.jpg")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "img")
+        self.assertEqual(html_node.value, "Google Image")
+        self.assertEqual(html_node.props, {"src": "https://www.google.com/image.jpg", "alt": "Google Image"})
 
 if __name__ == "__main__":
     unittest.main()
