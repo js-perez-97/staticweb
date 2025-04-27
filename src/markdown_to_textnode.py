@@ -4,6 +4,7 @@ from textnode import TextNode, TextType
 def split_nodes_delimiter(list_of_old_nodes, delimiter, text_type):
     """Split text nodes based on a delimiter and assign appropriate TextType to the split parts."""
     output = []
+    text_type = TextType(text_type)
 
     # Handle simple delimiters (code and bold)
     if delimiter in ("`", "**"):
@@ -97,9 +98,7 @@ node = TextNode("This is text with a `code block`", TextType.TEXT)
 node = TextNode("This is text with a **bold** text", TextType.TEXT)
 node = TextNode("This is text with a `ton of` code, like `3 or 4`, amazing, lol look a **bold** text", TextType.TEXT)
 node = TextNode("**bold** text", TextType.TEXT)
+node = TextNode("This is text with a **bold** text", TextType.TEXT)
 
-new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
 new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
-node = TextNode("My favorite search engine is [Duck Duck Go](https://duckduckgo.com), it just works! not like [google](https://google.com), and this one is just bad: [meta](facebook.com)", TextType.TEXT)
-new_nodes = split_nodes_delimiter([node], "[", TextType.LINK)
 print(new_nodes)
