@@ -1,8 +1,9 @@
 import re
 from textnode import TextNode, TextType
 
+
 def split_nodes_delimiter(list_of_old_nodes, delimiter, text_type):
-    """Split text nodes based on a delimiter and assign appropriate TextType to the split parts."""
+    # Split text nodes based on a delimiter and assign appropriate TextType to the split parts.
     output = []
     text_type = TextType(text_type)
 
@@ -26,6 +27,7 @@ def split_nodes_delimiter(list_of_old_nodes, delimiter, text_type):
     else:
         raise ValueError(f"Unsupported delimiter: {delimiter}")
 
+
 def _handle_simple_delimiter(list_of_old_nodes, delimiter, text_type, output):
     for node in list_of_old_nodes:
         if delimiter in node.text:
@@ -41,6 +43,7 @@ def _handle_simple_delimiter(list_of_old_nodes, delimiter, text_type, output):
         else:
             output.append(node)
     return output
+
 
 def _handle_asterisk_delimiter(list_of_old_nodes, text_type, output):
     for node in list_of_old_nodes:
@@ -59,6 +62,7 @@ def _handle_asterisk_delimiter(list_of_old_nodes, text_type, output):
             output.append(node)
     return output
 
+
 def _handle_link_delimiter(list_of_old_nodes, text_type, output):
     for node in list_of_old_nodes:
         if "[" in node.text:
@@ -68,13 +72,16 @@ def _handle_link_delimiter(list_of_old_nodes, text_type, output):
 
             two_nodeparts = nodeparts[1].split(")", 1)
             link_and_url = two_nodeparts[0].split("](")
-            output.append(TextNode(link_and_url[0], text_type, link_and_url[1]))
+            output.append(
+                TextNode(link_and_url[0], text_type, link_and_url[1]))
 
             if two_nodeparts[1]:
-                output.extend(split_nodes_delimiter([TextNode(two_nodeparts[1], TextType.TEXT)], "[", TextType.LINK))
+                output.extend(split_nodes_delimiter(
+                    [TextNode(two_nodeparts[1], TextType.TEXT)], "[", TextType.LINK))
         else:
             output.append(node)
     return output
+
 
 def _handle_image_delimiter(list_of_old_nodes, text_type, output):
     for node in list_of_old_nodes:
@@ -85,18 +92,22 @@ def _handle_image_delimiter(list_of_old_nodes, text_type, output):
 
             two_nodeparts = nodeparts[1].split(")", 1)
             link_and_url = two_nodeparts[0].split("](")
-            output.append(TextNode(link_and_url[0], text_type, link_and_url[1]))
+            output.append(
+                TextNode(link_and_url[0], text_type, link_and_url[1]))
 
             if two_nodeparts[1]:
-                output.extend(split_nodes_delimiter([TextNode(two_nodeparts[1], TextType.TEXT)], "![", TextType.IMAGE))
+                output.extend(split_nodes_delimiter(
+                    [TextNode(two_nodeparts[1], TextType.TEXT)], "![", TextType.IMAGE))
         else:
             output.append(node)
     return output
 
+
 node = TextNode("This is text with a `code block` word", TextType.TEXT)
 node = TextNode("This is text with a `code block`", TextType.TEXT)
 node = TextNode("This is text with a **bold** text", TextType.TEXT)
-node = TextNode("This is text with a `ton of` code, like `3 or 4`, amazing, lol look a **bold** text", TextType.TEXT)
+node = TextNode(
+    "This is text with a `ton of` code, like `3 or 4`, amazing, lol look a **bold** text", TextType.TEXT)
 node = TextNode("**bold** text", TextType.TEXT)
 node = TextNode("This is text with a **bold** text", TextType.TEXT)
 

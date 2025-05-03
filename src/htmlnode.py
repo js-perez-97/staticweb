@@ -19,6 +19,7 @@ class HTMLNode:
     def __eq__(self, other):
         return self.tag == other.tag and self.value == other.value and self.children == other.children and self.props == other.props
 
+
 class LeafNode(HTMLNode):
     def __init__(self, tag=None, value=None, props=None):
         super().__init__(tag, value, None, props)
@@ -26,11 +27,12 @@ class LeafNode(HTMLNode):
             raise ValueError("All leaf nodes must have a value")
 
     def to_html(self):
-        if self.tag == "img":       #this are 2 self line for image format
+        if self.tag == "img":  # this are 2 self line for image format
             return f"<{self.tag}{self.props_to_html()}>"
         if self.tag != None:
             return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
         return f"{self.value}"
+
 
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
