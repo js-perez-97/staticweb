@@ -101,15 +101,3 @@ def _handle_image_delimiter(list_of_old_nodes, text_type, output):
         else:
             output.append(node)
     return output
-
-
-node = TextNode("This is text with a `code block` word", TextType.TEXT)
-node = TextNode("This is text with a `code block`", TextType.TEXT)
-node = TextNode("This is text with a **bold** text", TextType.TEXT)
-node = TextNode(
-    "This is text with a `ton of` code, like `3 or 4`, amazing, lol look a **bold** text", TextType.TEXT)
-node = TextNode("**bold** text", TextType.TEXT)
-node = TextNode("This is text with a **bold** text", TextType.TEXT)
-
-new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
-print(new_nodes)
