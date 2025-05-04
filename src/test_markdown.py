@@ -40,15 +40,15 @@ class TestMarkdownTextNode(unittest.TestCase):
 
         # Test correct image and link nodes
         node0 = TextNode(
-            "This is a [link](https://www.google.com)", TextType.TEXT)
+            "This is a [link](https://boot.dev)", TextType.TEXT)
         node1 = TextNode(
-            "This is a ![image](https://www.google.com)", TextType.TEXT)
+            "This is a ![image, alt text include](https://boot.dev)", TextType.TEXT)
         node0_split = split_nodes_delimiter([node0], "[", TextType.LINK)
         node1_split = split_nodes_delimiter([node1], "![", TextType.IMAGE)
         self.assertEqual(node0_split, [TextNode(
-            'This is a ', TextType.TEXT), TextNode('link', TextType.LINK, url="https://www.google.com")])
+            'This is a ', TextType.TEXT), TextNode('link', TextType.LINK, "https://boot.dev")])
         self.assertEqual(node1_split, [TextNode(
-            'This is a ', TextType.TEXT), TextNode('image', TextType.IMAGE, url="https://www.google.com")])
+            'This is a ', TextType.TEXT), TextNode('image, alt text include', TextType.IMAGE, "https://boot.dev")])
 
         # Test recursive split
         node = TextNode(
