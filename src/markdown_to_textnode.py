@@ -4,6 +4,8 @@ from textnode import TextNode, TextType
 
 def split_nodes_delimiter(list_of_old_nodes, delimiter, text_type):
     # Split text nodes based on a delimiter and assign appropriate TextType to the split parts.
+
+    # TODO: IF list_of_old_nodes != type(list) then list_of_old_nodes = [list_of_old_nodes]
     output = []
     text_type = TextType(text_type)
 
@@ -101,3 +103,32 @@ def _handle_image_delimiter(list_of_old_nodes, text_type, output):
         else:
             output.append(node)
     return output
+
+def markdown_to_blockmarkdown(text):
+    text = text.split('\n\n')
+    for i in range(len(text)):
+        text[i] = text[i].replace('\n','')
+    return text
+
+aja = '''# This is a heading
+
+
+
+This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
+
+
+This
+
+aja
+
+- This is the first list item in a list block
+- This is a list item
+- This is another list item
+
+
+
+
+'''
+
+print(markdown_to_blockmarkdown(aja))
+print('\nThis'.replace('\n',''))
