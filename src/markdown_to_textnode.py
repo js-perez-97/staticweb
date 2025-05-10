@@ -2,133 +2,118 @@ import re
 from textnode import TextNode, TextType
 
 
-def split_nodes_delimiter(list_of_old_nodes, delimiter, text_type):
+def split_nodes_delimiter(list_of_old_nodes: list, delimiter: str, text_type: TextType) -> list:
     # Split text nodes based on a delimiter and assign appropriate TextType to the split parts.
 
+    if not isinstance(list_of_old_nodes, list):
+        raise ValueError("list_of_old_nodes must be a list")
+
     # TODO: IF list_of_old_nodes != type(list) then list_of_old_nodes = [list_of_old_nodes]
-    output = []
+    list_new_nodes = []
     text_type = TextType(text_type)
 
     # Handle simple delimiters (code and bold)
     if delimiter in ("`", "**"):
-        return _handle_simple_delimiter(list_of_old_nodes, delimiter, text_type, output)
+        return _handle_simple_delimiter(list_of_old_nodes, delimiter, text_type, list_new_nodes)
 
     # Handle single asterisk
     elif delimiter == "*":
-        return _handle_asterisk_delimiter(list_of_old_nodes, text_type, output)
-
-    # Handle link format
-    elif delimiter == "[":
-        return _handle_link_delimiter(list_of_old_nodes, text_type, output)
+        return _handle_asterisk_delimiter(list_of_old_nodes, text_type, list_new_nodes)
 
     # Handle image format
     elif delimiter == "![":
-        return _handle_image_delimiter(list_of_old_nodes, text_type, output)
+        return _handle_image_delimiter(list_of_old_nodes, text_type, list_new_nodes)
+
+    # Handle link format
+    elif delimiter == "[":
+        return _handle_link_delimiter(list_of_old_nodes, text_type, list_new_nodes)
 
     # Handle errors
     else:
         raise ValueError(f"Unsupported delimiter: {delimiter}")
 
 
-def _handle_simple_delimiter(list_of_old_nodes, delimiter, text_type, output):
+def _handle_simple_delimiter(list_of_old_nodes: list, delimiter: str, text_type: TextType, list_new_nodes: list) -> list:
     for node in list_of_old_nodes:
-        if delimiter in node.text:
-            nodeparts = node.text.split(delimiter)
-            for i in range(len(nodeparts)):
-                if nodeparts[i] == "":
-                    continue
+        if delimiter not in node.text:
+            list_new_nodes.append(node)
+            continue
+        nodeparts = node.text.split(delimiter)
+        for i in range(len(nodeparts)):
+            if nodeparts[i] == "":
+                continue
+            if i % 2 == 0:
+                list_new_nodes.append(TextNode(nodeparts[i], TextType.TEXT))
+            else:
+                list_new_nodes.append(TextNode(nodeparts[i], text_type))
+    return list_new_nodes
 
-                if i % 2 == 0:
-                    output.append(TextNode(nodeparts[i], TextType.TEXT))
-                else:
-                    output.append(TextNode(nodeparts[i], text_type))
-        else:
-            output.append(node)
-    return output
 
-
-def _handle_asterisk_delimiter(list_of_old_nodes, text_type, output):
+def _handle_asterisk_delimiter(list_of_old_nodes: list, text_type: TextType, list_new_nodes: list) -> list:
     for node in list_of_old_nodes:
-        if "*" in node.text:
+        if "*" not in node.text:
+            list_new_nodes.append(node)
+            continue
             # Regex to match single asterisks | (?<!\*) - not preceded by an asterisk (negative lookbehind) | \* - match an asterisk | (?!\*) - not followed by an asterisk (negative lookahead)
-            nodeparts = re.split(r'(?<!\*)\*(?!\*)', node.text)
-            for i in range(len(nodeparts)):
-                if nodeparts[i] == "":
-                    continue
+        nodeparts = re.split(r'(?<!\*)\*(?!\*)', node.text)
+        for i in range(len(nodeparts)):
+            if nodeparts[i] == "":
+                continue
+            if i % 2 == 0:
+                list_new_nodes.append(TextNode(nodeparts[i], TextType.TEXT))
+            else:
+                list_new_nodes.append(TextNode(nodeparts[i], text_type))
+    return list_new_nodes
 
-                if i % 2 == 0:
-                    output.append(TextNode(nodeparts[i], TextType.TEXT))
-                else:
-                    output.append(TextNode(nodeparts[i], text_type))
-        else:
-            output.append(node)
-    return output
-
-
-def _handle_link_delimiter(list_of_old_nodes, text_type, output):
+def _handle_image_delimiter(list_of_old_nodes: list, text_type: TextType, list_new_nodes: list) -> list:
     for node in list_of_old_nodes:
-        if "[" in node.text:
-            nodeparts = node.text.split("[", 1)
-            if nodeparts[0]:
-                output.append(TextNode(nodeparts[0], TextType.TEXT))
+        if "![" not in node.text:
+            list_new_nodes.append(node)
+            continue
+        nodeparts = node.text.split("![", 1)
+        if nodeparts[0]:
+            list_new_nodes.append(TextNode(nodeparts[0], TextType.TEXT))
+        two_nodeparts = nodeparts[1].split(")", 1)
+        link_and_url = two_nodeparts[0].split("](")
+        list_new_nodes.append(
+            TextNode(link_and_url[0], text_type, link_and_url[1]))
+        if two_nodeparts[1]:
+            list_new_nodes.extend(split_nodes_delimiter(
+                [TextNode(two_nodeparts[1], TextType.TEXT)], "![", TextType.IMAGE))
+    return list_new_nodes
 
-            two_nodeparts = nodeparts[1].split(")", 1)
-            link_and_url = two_nodeparts[0].split("](")
-            output.append(
-                TextNode(link_and_url[0], text_type, link_and_url[1]))
-
-            if two_nodeparts[1]:
-                output.extend(split_nodes_delimiter(
-                    [TextNode(two_nodeparts[1], TextType.TEXT)], "[", TextType.LINK))
-        else:
-            output.append(node)
-    return output
-
-
-def _handle_image_delimiter(list_of_old_nodes, text_type, output):
+def _handle_link_delimiter(list_of_old_nodes: list, text_type: TextType, list_new_nodes: list) -> list:
     for node in list_of_old_nodes:
-        if "![" in node.text:
-            nodeparts = node.text.split("![", 1)
-            if nodeparts[0]:
-                output.append(TextNode(nodeparts[0], TextType.TEXT))
+        if "[" not in node.text:
+            list_new_nodes.append(node)
+            continue
+        nodeparts = node.text.split("[", 1)
+        if nodeparts[0]:
+            list_new_nodes.append(TextNode(nodeparts[0], TextType.TEXT))
+        two_nodeparts = nodeparts[1].split(")", 1)
+        link_and_url = two_nodeparts[0].split("](")
+        list_new_nodes.append(
+            TextNode(link_and_url[0], text_type, link_and_url[1]))
+        if two_nodeparts[1]:
+            list_new_nodes.extend(split_nodes_delimiter(
+                [TextNode(two_nodeparts[1], TextType.TEXT)], "[", TextType.LINK))
+    return list_new_nodes
 
-            two_nodeparts = nodeparts[1].split(")", 1)
-            link_and_url = two_nodeparts[0].split("](")
-            output.append(
-                TextNode(link_and_url[0], text_type, link_and_url[1]))
-
-            if two_nodeparts[1]:
-                output.extend(split_nodes_delimiter(
-                    [TextNode(two_nodeparts[1], TextType.TEXT)], "![", TextType.IMAGE))
-        else:
-            output.append(node)
-    return output
 
 def markdown_to_blockmarkdown(text):
     text = text.split('\n\n')
+    block = []
     for i in range(len(text)):
         text[i] = text[i].replace('\n','')
+        if text[i]:
+            block.append(text[i])
+    return block
+
+def text_to_textnodes(text):
+    text = TextNode(text, TextType.TEXT)
+    text = split_nodes_delimiter([text], "`", TextType.CODE)
+    text = split_nodes_delimiter(text, "*", TextType.ITALIC)
+    text = split_nodes_delimiter(text, "**", TextType.BOLD)
+    text = split_nodes_delimiter(text, "![", TextType.IMAGE)
+    text = split_nodes_delimiter(text, "[", TextType.LINK)
     return text
-
-aja = '''# This is a heading
-
-
-
-This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
-
-
-This
-
-aja
-
-- This is the first list item in a list block
-- This is a list item
-- This is another list item
-
-
-
-
-'''
-
-print(markdown_to_blockmarkdown(aja))
-print('\nThis'.replace('\n',''))
