@@ -98,3 +98,12 @@ def _handle_link_delimiter(list_of_old_nodes: list, text_type: TextType, list_ne
             list_new_nodes.extend(split_nodes_delimiter(
                 [TextNode(two_nodeparts[1], TextType.TEXT)], "[", TextType.LINK))
     return list_new_nodes
+
+def text_to_textnodes(text):
+    text = TextNode(text, TextType.TEXT)
+    text = split_nodes_delimiter([text], "`", TextType.CODE)
+    text = split_nodes_delimiter(text, "*", TextType.ITALIC)
+    text = split_nodes_delimiter(text, "**", TextType.BOLD)
+    text = split_nodes_delimiter(text, "![", TextType.IMAGE)
+    text = split_nodes_delimiter(text, "[", TextType.LINK)
+    return text

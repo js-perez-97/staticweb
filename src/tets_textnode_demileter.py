@@ -1,6 +1,6 @@
 import unittest
 
-from textnode_delimiter import split_nodes_delimiter
+from textnode_delimiter import split_nodes_delimiter, text_to_textnodes
 from textnode import TextNode, TextType
 
 
@@ -59,3 +59,18 @@ class TestTextNodeDelimiter(unittest.TestCase):
         node = split_nodes_delimiter(node, "**", TextType.BOLD)
         self.assertEqual(node, [TextNode(
             'This is text with a ', TextType.TEXT), TextNode('ton of', TextType.CODE), TextNode(' code, like ', TextType.TEXT), TextNode('3 or 4', TextType.CODE), TextNode(', amazing, lol look a ', TextType.TEXT), TextNode('bold', TextType.BOLD), TextNode(' text', TextType.TEXT)])
+
+    def test_text_to_textnodes(self):
+        # Test text to text nodes
+        text = 'This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)'
+        text_nodes = text_to_textnodes(text)
+        self.assertEqual(text_nodes, [TextNode(
+            'This is ', TextType.TEXT), TextNode('text', TextType.BOLD), TextNode(' with an ', TextType.TEXT), TextNode('italic', TextType.ITALIC), TextNode(' word and a ', TextType.TEXT), TextNode('code block', TextType.CODE), TextNode(' and an ', TextType.TEXT), TextNode('obi wan image', TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), TextNode(' and a ', TextType.TEXT), TextNode('link', TextType.LINK, "https://boot.dev")])
+        text = 'This is a [link](https://boot.dev), and another one [here](https://boot.dev) and **bold** text, and a ![image](https://boot.dev) and another ![image](https://boot.dev) and a `code block` and another `code block`'
+        text_nodes = text_to_textnodes(text)
+        self.assertEqual(text_nodes, [TextNode(
+            'This is a ', TextType.TEXT), TextNode('link', TextType.LINK, "https://boot.dev"), TextNode(', and another one ', TextType.TEXT), TextNode('here', TextType.LINK, "https://boot.dev"), TextNode(' and ', TextType.TEXT), TextNode('bold', TextType.BOLD), TextNode(' text, and a ', TextType.TEXT), TextNode('image', TextType.IMAGE, "https://boot.dev"), TextNode(' and another ', TextType.TEXT), TextNode('image', TextType.IMAGE, "https://boot.dev"), TextNode(' and a ', TextType.TEXT), TextNode('code block', TextType.CODE), TextNode(' and another ', TextType.TEXT), TextNode('code block', TextType.CODE)])
+
+
+if __name__ == "__main__":
+    unittest.main()
