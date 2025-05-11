@@ -19,7 +19,7 @@ class Block:
     def __repr__(self):
         return f"Block('{self.text}', {self.block_type})"
 
-def block_to_block_type(text):
+def block_to_BlockType(text):
     if text.startswith("#"):
         return BlockType.HEADING
     elif text.startswith("```"):
