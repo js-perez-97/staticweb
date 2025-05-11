@@ -5,18 +5,18 @@ class HTMLNode:
         self.children = children
         self.props = props
 
-    def to_html(self):
+    def to_html(self) -> str:
         raise NotImplementedError("to_html method must be implemented")
 
-    def props_to_html(self):
+    def props_to_html(self) -> str:
         if self.props:
             return ''.join([f' {key}="{value}"' for key, value in self.props.items()])
         return ''
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"HtmlNode(tag='{self.tag}', value='{self.value}', children={self.children}, props={self.props})"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.tag == other.tag and self.value == other.value and self.children == other.children and self.props == other.props
 
 
@@ -26,7 +26,7 @@ class LeafNode(HTMLNode):
         if self.value is None and self.tag != "img":
             raise ValueError("All leaf nodes must have a value")
 
-    def to_html(self):
+    def to_html(self) -> str:
         if self.tag == "img":  # this are 2 self line for image format
             return f"<{self.tag}{self.props_to_html()}>"
         if self.tag != None:
@@ -42,7 +42,7 @@ class ParentNode(HTMLNode):
         if self.children is None:
             raise ValueError("All parent nodes must have children")
 
-    def to_html(self):
+    def to_html(self) -> str:
         if self.children is not None:
             return f"<{self.tag}{self.props_to_html()}>{''.join([child.to_html() for child in self.children])}</{self.tag}>"
         raise ValueError("All parent nodes must have children")

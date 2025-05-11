@@ -17,16 +17,16 @@ class TextNode:
         self.text_type = TextType(text_type)
         self.url = url
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.text == other.text and self.text_type == other.text_type and self.url == other.url
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.url:
             return f"TextNode('{self.text}', {self.text_type}, {self.url})"
         return f"TextNode('{self.text}', {self.text_type})"
 
 
-def text_node_to_html_node(text_node):
+def text_node_to_html_node(text_node) -> LeafNode:
     match text_node.text_type:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
@@ -41,5 +41,4 @@ def text_node_to_html_node(text_node):
         # should return LeafNode with "img" tag, empty string vales, props("src" is the image URL, "alt" is the alt Text
         case TextType.IMAGE:
             return LeafNode("img", text_node.text, props={"src": text_node.url, "alt": text_node.text})
-
     raise Exception("Invalid text type")

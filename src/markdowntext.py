@@ -13,13 +13,13 @@ class Block:
         self.text = text
         self.block_type = block_type
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.text == other.text and self.block_type == other.block_type
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Block('{self.text}', {self.block_type})"
 
-def block_to_BlockType(text):
+def block_to_BlockType(text) -> BlockType:
     if text.startswith("#"):
         return BlockType.HEADING
     elif text.startswith("```"):
@@ -33,7 +33,7 @@ def block_to_BlockType(text):
     else:
         return BlockType.PARAGRAPH
 
-def markdown_to_markdownblocks(text):
+def markdown_to_markdownblocks(text) -> list:
     text = text.split('\n\n')
     block = []
     for i in range(len(text)):
