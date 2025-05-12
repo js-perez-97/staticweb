@@ -61,6 +61,7 @@ def _list_to_html_node(block, html) -> None:
         num_of_chars = 3
     else:
         raise Exception("How did u end here?, wrong HTMLList")
+    
     text = block.split("\n")
     for i in range(len(text)):
         inden_level = indentation_level(text[i])
@@ -68,6 +69,7 @@ def _list_to_html_node(block, html) -> None:
             next_inden_level = indentation_level(text[i+1])
         else:
             next_inden_level = 0
+            
         text[i] = text[i][inden_level+num_of_chars::]
         text[i] = "<li>"+text[i]
         if inden_level < next_inden_level:
@@ -75,7 +77,7 @@ def _list_to_html_node(block, html) -> None:
         if inden_level == next_inden_level:
             text[i] += "</li>"
         if inden_level > next_inden_level:
-            text[i] += "</li><"+type_of_list+"l>" + '</li>'*(inden_level//4 - next_inden_level//4)
+            text[i] += "</li></"+type_of_list+"l>" + '</li>'*(inden_level//4 - next_inden_level//4)
         text[i] = text_to_textnodes(text[i])
         text[i] = [text_node_to_html_node(node) for node in text[i]]
     html.append(ParentNode(type_of_list+"l",sum(text,[])))
@@ -85,7 +87,7 @@ def indentation_level(text) -> int:
     for char in text:
         if char==" ":
             level += 1
-        elif char == "-":
+        else:
             break
     if level%4 != 0:
         raise ValueError("Wrong indentation, it have to be: 4")
