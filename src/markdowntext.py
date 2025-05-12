@@ -5,8 +5,7 @@ class BlockType(Enum):
     HEADING = "heading"
     CODE = "code" #"```"
     QUOTE = "quote" #">"
-    UNORDERED_LIST = "unordered_list"
-    ORDERED_LIST = "ordered_list"
+    LIST = "list"
 
 class Block:
     def __init__(self, text, block_type):
@@ -20,16 +19,14 @@ class Block:
         return f"Block('{self.text}', {self.block_type})"
 
 def block_to_BlockType(text) -> BlockType:
-    if text.startswith("#"):
+    if text.startswith("# "):
         return BlockType.HEADING
-    elif text.startswith("```"):
+    elif text.startswith("```\n"):
         return BlockType.CODE
-    elif text.startswith(">"):
+    elif text.startswith("> "):
         return BlockType.QUOTE
-    elif text.startswith("-"):
-        return BlockType.UNORDERED_LIST
-    elif text.startswith("1."):
-        return BlockType.ORDERED_LIST
+    elif text.startswith("- ") or text.startswith("1. "):
+        return BlockType.LIST
     else:
         return BlockType.PARAGRAPH
 
