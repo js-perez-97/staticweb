@@ -26,3 +26,4 @@ and other
 paragraph
         """
         self.assertEqual(markdown_to_html(text),"<div><p>This is <b>a</b> test in <b>a</b> single paragraph</p><p>and other paragraph</p></div>")
+

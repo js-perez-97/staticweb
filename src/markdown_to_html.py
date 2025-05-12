@@ -18,11 +18,12 @@ def markdown_to_html(text) -> str:
             case BlockType.CODE:
                 _code_to_html_node(block, html)
             case BlockType.QUOTE:
-                continue
+                print(block)
+                _quote_to_html_node(block, html)
             case BlockType.UNORDERED_LIST:
-                continue
+                _unorderedlist_to_html_node(block, html)
             case BlockType.ORDERED_LIST:
-                continue
+                _orederedlist_to_html_node(block, html)
             case _:
                 return("invalid block type")
     return ParentNode("div", html).to_html()
@@ -49,12 +50,16 @@ def _code_to_html_node(block, html) -> None:
 
 def _quote_to_html_node(block, html) -> None:
     block = block.replace('\n', " ") #something like this??
-    block = block.replace(">", "\n")
+    block = block.replace("> ", "")
     block = text_to_textnodes(block)
     block = [text_node_to_html_node(node) for node in block]
     html.append(ParentNode("blockquote", block))
 
+def _unorderedlist_to_html_node(block, html) -> None:
+    print("todo")
 
+def _orederedlist_to_html_node(block, html) -> None:
+    print("todo")
 text = """
 This is **bolded** paragraph
 text in a p
@@ -83,4 +88,18 @@ the **same** even with inline stuff
 """
 # print(markdown_to_html(text)=="<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>")
 test ="<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>"
+# print(test==markdown_to_html(text))
+
+text = """
+> This is a quote
+> with multiple lines
+
+and
+
+> Another quote
+> with 2 lines
+"""
+test = "<div><blockquote>This is a quote with multiple lines</blockquote><p>and</p><blockquote>Another quote with 2 lines</blockquote></div>"
+print(markdown_to_html(text))
+print(test)
 print(test==markdown_to_html(text))
