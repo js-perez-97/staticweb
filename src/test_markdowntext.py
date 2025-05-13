@@ -14,7 +14,7 @@ class TestMarkdownText(unittest.TestCase):
     def test_block_to_BlockType(self):
         # Test block to block type
         self.assertEqual(block_to_BlockType("# This is a heading"), BlockType.HEADING)
-        self.assertEqual(block_to_BlockType("``` This is code ```"), BlockType.CODE)
+        self.assertEqual(block_to_BlockType("```\nThis is code\n```"), BlockType.CODE)
         self.assertEqual(block_to_BlockType("> And quotes \n > line2"), BlockType.QUOTE)
         self.assertEqual(block_to_BlockType("- This is a\n - List"), BlockType.LIST)
         self.assertEqual(block_to_BlockType("1. Anothe List in our construction"), BlockType.LIST)

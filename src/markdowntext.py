@@ -19,7 +19,7 @@ class Block:
         return f"Block('{self.text}', {self.block_type})"
 
 def block_to_BlockType(text) -> BlockType:
-    if text.startswith("# "):
+    if text.startswith("#"):
         return BlockType.HEADING
     elif text.startswith("```\n"):
         return BlockType.CODE
