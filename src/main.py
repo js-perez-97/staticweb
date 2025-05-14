@@ -2,18 +2,17 @@ import os
 import shutil
 
 def main():
-    print("main executed")
-    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-    print(f"abspath is: {PROJECT_ROOT}")
+
+    print("\n Copy operation start! \n")
+
+    CURRENT_FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+    PROJECT_ROOT = os.path.dirname(CURRENT_FILE_DIR)
     STATIC_DIR = os.path.join(PROJECT_ROOT, "static")
-    print(f"static path is: {STATIC_DIR}")
     PUBLIC_DIR = os.path.join(PROJECT_ROOT, "public")
-    print(f"public path is: {PUBLIC_DIR}")
     
     # Execute the copy
-    # copy_file(STATIC_DIR, PUBLIC_DIR)
-    # print("\nCopy operation completed successfully!")
-
+    copy_files(STATIC_DIR, PUBLIC_DIR)
+    print("\nCopy operation completed successfully!\n")
 
 def copy_files( source_dir: str, destination_dir: str) -> None:
 
@@ -25,6 +24,8 @@ def copy_files( source_dir: str, destination_dir: str) -> None:
     os.mkdir(destination_dir)
 
     for item in os.listdir(source_dir):
+        
+        #For Recursion
         source_path = os.path.join(source_dir, item)
         destination_path = os.path.join(destination_dir, item)
         
@@ -35,7 +36,5 @@ def copy_files( source_dir: str, destination_dir: str) -> None:
         else:
             print(f"Copying directory: {source_path} -> {destination_path}")
             copy_files(source_path, destination_path)
-
-          
-        
+  
 main()
