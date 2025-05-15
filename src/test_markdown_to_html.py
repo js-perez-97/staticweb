@@ -1,6 +1,6 @@
 import unittest
 
-from src.markdown_to_html import indentation_level, markdown_to_html 
+from src.markdown_to_html import indentation_level, markdown_to_html, extract_title
 
 
 class TestMarkdownToHTML(unittest.TestCase):
@@ -155,6 +155,51 @@ with multiple lines
             indentation_level("   - Invalid indentation")  # 3 spaces
         with self.assertRaises(ValueError):
             indentation_level("     - Invalid indentation")  # 5 spaces
+
+    def test_extract_title_exceptions(self):
+
+        # Test markdown without heading
+        with self.assertRaises(Exception) as context:
+            extract_title("This is some content without a title")
+        self.assertEqual(str(context.exception), "First Paragrath of Markdown sould be <# Title>")
+
+        # Test markdown with wrong heading level
+        with self.assertRaises(Exception) as context:
+            extract_title("## This is not a level 1 heading")
+        self.assertEqual(str(context.exception), "First Paragrath of Markdown sould be <# Title>")
+
+        # Test markdown with heading not at start
+        with self.assertRaises(Exception) as context:
+            extract_title("Some text\n\n# Title")
+        self.assertEqual(str(context.exception), "First Paragrath of Markdown sould be <# Title>")
+
+    def test_extract_title_success(self):
+        # Test simple title
+        text = """
+# My Title
+
+Some more text
+"""
+        expected = "My Title"
+        self.assertEqual(extract_title(text), expected)
+
+        # Test title with formatting
+        text = """
+# My **Bold** Title
+
+This is some content
+"""
+        expected = "My **Bold** Title"
+        self.assertEqual(extract_title(text), expected)
+
+        # Test title with multiple words and formatting
+        text = """
+# Title With Many spaces:          
+
+Another paragrath
+"""
+        expected = "Title With Many spaces:"
+        self.assertEqual(extract_title(text), expected)
 
 if __name__ == "__main__":
     unittest.main()

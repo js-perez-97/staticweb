@@ -7,7 +7,6 @@ from textnode_delimiter import text_to_textnodes
 def markdown_to_html(text) -> str:
     text = markdown_to_markdownblocks(text)
     html = []
-    print(text)
     for block in text:
         block_type = block_to_BlockType(block)
         match block_type:
@@ -32,7 +31,6 @@ def _paragraph_to_html_node(block, html) -> None:
     html.append(ParentNode("p", block))
 
 def _heading_to_html_node(block, html) -> None:
-    print(block)
     block = block.replace('\n', " ")
     block = block.split(" ", 1)
     tag = "h" + str(len(block[0]))
@@ -93,3 +91,25 @@ def indentation_level(text) -> int:
     if level%4 != 0:
         raise ValueError("Wrong indentation, it have to be: 4")
     return level
+
+def extract_title(markdown) -> str:
+    markdown = markdown_to_markdownblocks(markdown)
+    if markdown[0][0:2] == "# ":
+        return markdown[0][2::].strip()
+    else:
+        raise Exception("First Paragrath of Markdown sould be <# Title>")
+
+
+test = """
+# Tolkien Fan Club
+
+![JRR Tolkien sitting](/images/tolkien.png)
+
+Here's the deal, **I like Tolkien**.
+
+> "I am in fact a Hobbit in all but size."
+>
+> -- J.R.R. Tolkien
+"""
+        
+print(extract_title(test))
